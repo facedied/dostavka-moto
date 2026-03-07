@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доставка мотоциклами</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Темная тема */
+        body {
+            background: #0a0c0f;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #1a1e24;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        /* Шапка */
+        .header {
+            background: linear-gradient(135deg, #0f1217, #1a1e24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 2px solid #ff6b6b;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #fff, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(255,107,107,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            color: #ffd93d;
+            font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        /* Навигация */
+        .tabs {
+            display: flex;
+            background: #0f1217;
+            padding: 15px 15px 0 15px;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .tab-btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            background: #1e242c;
+            color: #8b949e;
+            cursor: pointer;
+            border-radius: 15px 15px 0 0;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+        
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+        
+        .tab-btn.active {
+            background: #ff6b6b;
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255,107,107,0.3);
+            border-color: #ff8e8e;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: #2a313c;
+            color: white;
+            border-color: #ff6b6b;
+        }
+        
+        /* Контент */
+        .tab-content {
+            padding: 30px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Сетка */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        /* Карточки */
+        .card {
+            background: #252b33;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+            border-left: 4px solid #ff6b6b;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255,107,107,0.2), 0 0 0 1px rgba(255,107,107,0.3);
+        }
+        
+        .card h3 {
+            color: #fff;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ff6b6b;
+            padding-bottom: 10px;
+            font-size: 1.5em;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .card h4 {
+            color: #ffd93d;
+            margin: 15px 0 10px 0;
+        }
+        
+        /* Формы */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b4c0d0;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            background: #1e242c;
+            border: 2px solid #323b45;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+            color: white;
+        }
+        
+        .phone-input {
+            font-family: monospace;
+            font-size: 1.2em;
+            letter-spacing: 1px;
+        }
+        
+        .auto-expand {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 18px;
+            background: #1e242c;
+            border: 2px solid #323b45;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+            color: white;
+            font-family: inherit;
+            line-height: 1.5;
+            resize: none;
+            overflow-y: hidden;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 18px;
+            background: #1e242c;
+            border: 2px solid #323b45;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        input:focus, select:focus, .auto-expand:focus, textarea:focus {
+            border-color: #ff6b6b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255,107,107,0.2);
+            background: #252d38;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #1e242c;
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 2px solid #323b45;
+        }
+        
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+            accent-color: #ff6b6b;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            color: #ffd93d;
+        }
+        
+        /* Кнопки */
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 10px 20px rgba(255,107,107,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(30deg);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::after {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(255,107,107,0.5);
+        }
+        
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+        }
+        
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 0.9em;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            box-shadow: 0 5px 15px rgba(74,144,226,0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #1a1e24;
+            box-shadow: 0 5px 15px rgba(255,193,7,0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            box-shadow: none;
+        }
+        
+        .btn-outline:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        /* Кнопка выхода в профиле */
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-logout-btn {
+            padding: 10px 25px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .profile-logout-btn:hover {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+            transform: scale(1.05);
+        }
+        
+        /* Профиль пользователя */
+        .user-profile {
+            background: #1e242c;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 2px solid #ff6b6b;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-info h3 {
+            margin: 0;
+            color: white;
+            border: none;
+        }
+        
+        .user-info p {
+            color: #b4c0d0;
+        }
+        
+        /* Заказы */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .orders-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .orders-list::-webkit-scrollbar-track {
+            background: #1e242c;
+            border-radius: 10px;
+        }
+        
+        .orders-list::-webkit-scrollbar-thumb {
+            background: #ff6b6b;
+            border-radius: 10px;
+        }
+        
+        .order-card {
+            background: #1e242c;
+            border: 2px solid #323b45;
+            border-radius: 15px;
+            padding: 20px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .order-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #ff6b6b;
+        }
+        
+        .order-card.priority::before {
+            background: #ffd93d;
+            width: 6px;
+        }
+        
+        .order-card.priority {
+            border-color: #ffd93d;
+            background: #2a2a24;
+        }
+        
+        .order-card.delivering {
+            border-color: #4caf50;
+        }
+        
+        .order-card.delivering::before {
+            background: #4caf50;
+        }
+        
+        .order-card.delivered {
+            border-color: #6c757d;
+            opacity: 0.8;
+        }
+        
+        .order-card.delivered::before {
+            background: #6c757d;
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #323b45;
+            color: #b4c0d0;
+        }
+        
+        .order-priority-badge {
+            background: #ffd93d;
+            color: #1a1e24;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .order-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .status-pending { 
+            background: #ffd93d; 
+            color: #1a1e24; 
+        }
+        .status-process { 
+            background: #4caf50; 
+            color: white; 
+        }
+        .status-delivered { 
+            background: #6c757d; 
+            color: white; 
+        }
+        
+        .rating {
+            color: #ffd93d;
+            font-size: 1.3em;
+            letter-spacing: 3px;
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .star {
+            font-size: 2em;
+            cursor: pointer;
+            color: #4a4f58;
+            transition: 0.2s;
+        }
+        
+        .star.active {
+            color: #ffd93d;
+            text-shadow: 0 0 10px rgba(255,217,61,0.5);
+        }
+        
+        .star:hover {
+            transform: scale(1.2);
+            color: #ffd93d;
+        }
+        
+        /* Таблицы */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #1e242c;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #323b45;
+        }
+        
+        th {
+            background: #0f1217;
+            color: #ffd93d;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #252d38;
+        }
+        
+        /* Секретные коды */
+        .secret-codes {
+            background: #0f1217;
+            border: 2px solid #ff6b6b;
+            color: #ffd93d;
+            padding: 20px;
+            border-radius: 15px;
+            font-family: monospace;
+            margin-top: 20px;
+        }
+        
+        .secret-codes p {
+            margin: 8px 0;
+        }
+        
+        .code-example {
+            background: #1e242c;
+            padding: 5px 10px;
+            border-radius: 8px;
+            color: #ff6b6b;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #1e242c;
+            border-left: 4px solid #ff6b6b;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Панели админов */
+        .admin-panel {
+            background: #0f1217;
+            border: 2px solid #ff6b6b;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .admin-panel h4 {
+            color: #ffd93d;
+            margin-bottom: 15px;
+        }
+        
+        .feedback-item {
+            background: #1e242c;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #ff6b6b;
+        }
+        
+        /* Кнопка очистки базы */
+        .clear-db-btn {
+            background: linear-gradient(135deg, #dc3545, #a71d2a);
+            margin-top: 20px;
+            font-size: 1.2em;
+            padding: 20px;
+        }
+        
+        /* Адаптация */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                border-radius: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏍️ Доставка мотоциклами</h1>
+            <p>Доставляем только в пределах 10 км от деревни Крупино</p>
+        </div>
+        
+        <div class="tabs" id="mainTabs">
+            <button class="tab-btn active" onclick="openTab('client')">Покупатель</button>
+            <button class="tab-btn" onclick="openTab('courier')">Доставщик</button>
+            <button class="tab-btn" onclick="openTab('couriers-list')">Наши доставщики</button>
+            <button class="tab-btn" onclick="openTab('feedback')">Замечания сайту</button>
+        </div>
+        
+        <!-- Вкладка Покупателя -->
+        <div id="client" class="tab-content active">
+            <div class="grid-2">
+                <!-- Вход для покупателя -->
+                <div class="card" id="clientLoginCard">
+                    <h3>🍎 Вход для покупателя</h3>
+                    <div class="form-group">
+                        <label>Ваше имя</label>
+                        <input type="text" id="clientLoginName" placeholder="Введите имя">
+                    </div>
+                    <div class="form-group">
+                        <label>Ваш номер телефона (формат: +7XXXXXXXXXX)</label>
+                        <input type="tel" id="clientLoginPhone" class="phone-input" placeholder="+79999999999" pattern="\+7[0-9]{10}" maxlength="12">
+                    </div>
+                    <button class="btn" onclick="clientLogin()">🔑 Войти как покупатель</button>
+                </div>
+                
+                <!-- Форма заказа (появляется после входа) -->
+                <div class="card" id="clientOrderCard" style="display: none;">
+                    <div class="profile-header">
+                        <h3 id="clientGreeting"></h3>
+                        <button class="profile-logout-btn" onclick="clientLogout()">🚪 Выйти</button>
+                    </div>
+                    <form id="orderForm">
+                        <div class="form-group">
+                            <label>Магазин(ы) для покупки *</label>
+                            <input type="text" id="shop" placeholder="Например: Пятерочка, Магнит" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Что нужно купить *</label>
+                            <textarea id="items" class="auto-expand" rows="1" placeholder="Список продуктов" required oninput="autoExpand(this)"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Пожелания к заказу</label>
+                            <textarea id="wishes" class="auto-expand" rows="1" placeholder="Например: позвонить за 10 минут" oninput="autoExpand(this)"></textarea>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="priority">
+                            <label>Приоритетный заказ (+50 рублей) - будет вверху списка</label>
+                        </div>
+                        
+                        <button type="button" class="btn" onclick="createOrder()">✅ Оформить заказ</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Мои заказы покупателя -->
+            <div class="card" id="clientOrdersCard" style="display: none; margin-top: 20px;">
+                <h3>📦 Мои заказы</h3>
+                <div id="clientOrdersList" class="orders-list"></div>
+            </div>
+            
+            <!-- Рейтинг курьеров -->
+            <div class="card" style="margin-top: 20px;">
+                <h3>⭐ Рейтинг курьеров</h3>
+                <div class="grid-3" id="couriersRating">
+                    <!-- Заполняется скриптом -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Доставщика -->
+        <div id="courier" class="tab-content">
+            <!-- Формы регистрации/входа (скрываются после авторизации) -->
+            <div id="courierAuthForms">
+                <div class="grid-2">
+                    <!-- Регистрация -->
+                    <div class="card">
+                        <h3>📝 Регистрация доставщика</h3>
+                        <form id="registerForm">
+                            <div class="form-group">
+                                <label>Имя</label>
+                                <input type="text" id="regName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Номер телефона (формат: +7XXXXXXXXXX)</label>
+                                <input type="tel" id="regPhone" class="phone-input" placeholder="+79999999999" pattern="\+7[0-9]{10}" maxlength="12" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Пароль</label>
+                                <input type="password" id="regPassword" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Секретный код</label>
+                                <input type="text" id="secretCode" placeholder="Введите секретный код">
+                            </div>
+                            
+                            <button type="button" class="btn" onclick="registerCourier()">📝 Зарегистрироваться</button>
+                        </form>
+                        
+                        <div class="secret-codes">
+                            <p><strong>🔐 Секретные коды:</strong></p>
+                            <p>🔵 ДоставкаМото26 - <span class="code-example">Курьер</span></p>
+                            <p>🔴 АдминДоставки26 - <span class="code-example">Админ</span></p>
+                            <p>⚫ СуперАдминностьДоставки27 - <span class="code-example">Суперадмин</span></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Авторизация -->
+                    <div class="card">
+                        <h3>🔑 Вход для доставщиков</h3>
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label>Номер телефона (формат: +7XXXXXXXXXX)</label>
+                                <input type="tel" id="loginPhone" class="phone-input" placeholder="+79999999999" pattern="\+7[0-9]{10}" maxlength="12" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Пароль</label>
+                                <input type="password" id="loginPassword" required>
+                            </div>
+                            
+                            <button type="button" class="btn" onclick="loginCourier()">🚪 Войти</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Личный кабинет курьера (появляется после входа) -->
+            <div id="courierCabinet" style="display: none;">
+                <div class="profile-header">
+                    <h3>👤 Личный кабинет доставщика</h3>
+                    <button class="profile-logout-btn" onclick="logout()">🚪 Выйти</button>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar" id="courierAvatar">👤</div>
+                    <div class="user-info">
+                        <h3 id="cabinetName"></h3>
+                        <p>Титул: <span id="cabinetTitle"></span> | Рейтинг: ⭐ <span id="cabinetRating">0</span>/5 | Доставок: <span id="cabinetDeliveries">0</span></p>
+                    </div>
+                    <button class="btn-small btn-danger" onclick="deleteAccount()">🗑️ Удалить аккаунт</button>
+                </div>
+                
+                <!-- Для админов - замечания -->
+                <div id="adminFeedbackPanel" class="admin-panel" style="display: none;">
+                    <h4>📝 Замечания к сайту</h4>
+                    <div id="feedbacksContainer"></div>
+                </div>
+                
+                <!-- Для админов -->
+                <div id="adminPanel" class="admin-panel" style="display: none;">
+                    <h4>⚙️ Панель управления</h4>
+                    <div class="grid-2">
+                        <div>
+                            <h5>Управление заказами</h5>
+                            <select id="adminOrderSelect" style="margin-bottom: 10px; width: 100%;"></select>
+                            <button class="btn-small" onclick="adminDeleteOrder()">Удалить заказ</button>
+                        </div>
+                        <div>
+                            <h5>Управление курьерами</h5>
+                            <select id="adminCourierSelect" style="margin-bottom: 10px; width: 100%;"></select>
+                            <button class="btn-small" onclick="adminDeleteCourier()">Удалить курьера</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Для суперадминов -->
+                <div id="superAdminPanel" class="admin-panel" style="display: none;">
+                    <h4>👑 СуперАдмин панель</h4>
+                    <div class="grid-2">
+                        <div>
+                            <h5>Повысить до админа</h5>
+                            <select id="promoteToAdminSelect" style="margin-bottom: 10px; width: 100%;"></select>
+                            <button class="btn-small" onclick="promoteToAdmin()">Повысить</button>
+                        </div>
+                        <div>
+                            <h5>Понизить до курьера</h5>
+                            <select id="demoteToCourierSelect" style="margin-bottom: 10px; width: 100%;"></select>
+                            <button class="btn-small" onclick="demoteToCourier()">Понизить</button>
+                        </div>
+                    </div>
+                    <button class="btn clear-db-btn" onclick="clearDatabase()">⚠️ ПОЛНОСТЬЮ ОЧИСТИТЬ БАЗУ ДАННЫХ</button>
+                </div>
+                
+                <!-- Доступные заказы -->
+                <div class="card" style="margin-top: 20px;">
+                    <h3>📋 Доступные заказы</h3>
+                    <div id="availableOrders" class="orders-list"></div>
+                </div>
+                
+                <!-- Мои заказы -->
+                <div class="card" style="margin-top: 20px;">
+                    <h3>🛵 Мои заказы</h3>
+                    <div id="myOrders" class="orders-list"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Наши доставщики -->
+        <div id="couriers-list" class="tab-content">
+            <div class="card">
+                <h3>📋 Список всех доставщиков</h3>
+                <table id="couriersTable">
+                    <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Номер телефона</th>
+                            <th>Рейтинг</th>
+                            <th>Титул</th>
+                            <th>Доставок</th>
+                        </tr>
+                    </thead>
+                    <tbody id="couriersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Вкладка Замечания сайту -->
+        <div id="feedback" class="tab-content">
+            <div class="grid-2">
+                <!-- Форма отправки -->
+                <div class="card">
+                    <h3>📨 Оставить замечание</h3>
+                    <form id="feedbackForm">
+                        <div class="form-group">
+                            <label>Ваше имя</label>
+                            <input type="text" id="feedbackName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Ваш номер телефона (формат: +7XXXXXXXXXX)</label>
+                            <input type="tel" id="feedbackPhone" class="phone-input" placeholder="+79999999999" pattern="\+7[0-9]{10}" maxlength="12" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Пожелания/Замечания</label>
+                            <textarea id="feedbackText" class="auto-expand" rows="3" required oninput="autoExpand(this)"></textarea>
+                        </div>
+                        
+                        <button type="button" class="btn" onclick="sendFeedback()">📤 Отправить</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3>ℹ️ Информация</h3>
+                    <p style="color: #b4c0d0; line-height: 1.6;">Оставьте свои замечания и предложения по работе сайта. Администрация рассмотрит их в ближайшее время.</p>
+                    <div style="margin-top: 20px; padding: 20px; background: #1e242c; border-radius: 10px;">
+                        <p style="color: #ffd93d;">⭐ Рейтинг курьеров обновляется автоматически</p>
+                        <p style="color: #b4c0d0; margin-top: 10px;">📦 Приоритетные заказы отмечаются золотым цветом</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Хранилища данных
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        let couriers = JSON.parse(localStorage.getItem('couriers')) || [];
+        let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let currentClient = JSON.parse(localStorage.getItem('currentClient')) || null;
+        
+        // Инициализация
+        function initData() {
+            if (couriers.length === 0) {
+                couriers.push({
+                    id: 'superadmin',
+                    name: 'Супер Админ',
+                    phone: '+79999999999',
+                    password: 'admin123',
+                    title: 'Суперадмин',
+                    rating: 5.0,
+                    deliveriesCount: 0
+                });
+            }
+            saveData();
+            checkCurrentUser();
+            checkCurrentClient();
+        }
+        initData();
+        
+        function saveData() {
+            localStorage.setItem('orders', JSON.stringify(orders));
+            localStorage.setItem('couriers', JSON.stringify(couriers));
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+        }
+        
+        // Валидация номера телефона
+        function validatePhone(phone) {
+            const phoneRegex = /^\+7[0-9]{10}$/;
+            return phoneRegex.test(phone);
+        }
+        
+        // Форматирование номера (убираем все кроме цифр и добавляем +7)
+        function formatPhone(input) {
+            let numbers = input.replace(/[^\d]/g, '');
+            if (numbers.length > 0) {
+                if (numbers[0] === '7' || numbers[0] === '8') {
+                    numbers = numbers.substring(1);
+                }
+                numbers = numbers.substring(0, 10);
+                return '+7' + numbers;
+            }
+            return '';
+        }
+        
+        // Обработчик ввода для телефонных полей
+        function setupPhoneInputs() {
+            document.querySelectorAll('.phone-input').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value;
+                    let formatted = formatPhone(value);
+                    e.target.value = formatted;
+                });
+                
+                input.addEventListener('blur', function(e) {
+                    if (e.target.value && !validatePhone(e.target.value)) {
+                        showNotification('Неверный формат номера. Используйте +7XXXXXXXXXX', 'error');
+                    }
+                });
+            });
+        }
+        
+        // Авто-расширение текстовых полей
+        function autoExpand(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+        
+        // Уведомления
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.borderLeftColor = type === 'success' ? '#4caf50' : type === 'error' ? '#dc3545' : '#ff6b6b';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Обновление в реальном времени
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                orders = JSON.parse(localStorage.getItem('orders')) || [];
+                couriers = JSON.parse(localStorage.getItem('couriers')) || [];
+                feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+                
+                if (currentUser) {
+                    updateOrdersDisplay();
+                    updateAdminSelects();
+                    updateSuperAdminSelects();
+                    updateFeedbacksList();
+                }
+                if (currentClient) {
+                    updateClientOrders();
+                }
+                updateCouriersRating();
+                updateCouriersList();
+            }, 1000);
+        }
+        startRealTimeUpdates();
+        
+        // Проверка текущего пользователя
+        function checkCurrentUser() {
+            if (currentUser) {
+                document.getElementById('courierAuthForms').style.display = 'none';
+                document.getElementById('courierCabinet').style.display = 'block';
+                
+                const courier = couriers.find(c => c.phone === currentUser.phone);
+                if (courier) {
+                    currentUser = courier;
+                    document.getElementById('cabinetName').textContent = courier.name;
+                    document.getElementById('cabinetTitle').textContent = courier.title;
+                    document.getElementById('cabinetRating').textContent = courier.rating.toFixed(1);
+                    document.getElementById('cabinetDeliveries').textContent = courier.deliveriesCount || 0;
+                    document.getElementById('courierAvatar').textContent = courier.name.charAt(0);
+                    
+                    // Показываем панели в зависимости от титула
+                    document.getElementById('adminPanel').style.display = 'none';
+                    document.getElementById('superAdminPanel').style.display = 'none';
+                    document.getElementById('adminFeedbackPanel').style.display = 'none';
+                    
+                    if (courier.title === 'Админ' || courier.title === 'Суперадмин') {
+                        document.getElementById('adminPanel').style.display = 'block';
+                        document.getElementById('adminFeedbackPanel').style.display = 'block';
+                        updateAdminSelects();
+                        updateFeedbacksList();
+                    }
+                    if (courier.title === 'Суперадмин') {
+                        document.getElementById('superAdminPanel').style.display = 'block';
+                        updateSuperAdminSelects();
+                    }
+                    
+                    updateOrdersDisplay();
+                }
+            }
+        }
+        
+        // Проверка текущего покупателя
+        function checkCurrentClient() {
+            if (currentClient) {
+                document.getElementById('clientLoginCard').style.display = 'none';
+                document.getElementById('clientOrderCard').style.display = 'block';
+                document.getElementById('clientOrdersCard').style.display = 'block';
+                document.getElementById('clientGreeting').textContent = `👋 Здравствуйте, ${currentClient.name}!`;
+                updateClientOrders();
+            }
+        }
+        
+        // Переключение вкладок
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'couriers-list') {
+                updateCouriersList();
+            }
+        }
+        
+        // Вход покупателя
+        function clientLogin() {
+            const name = document.getElementById('clientLoginName').value;
+            const phone = document.getElementById('clientLoginPhone').value;
+            
+            if (!name || !phone) {
+                showNotification('Введите имя и номер телефона', 'error');
+                return;
+            }
+            
+            if (!validatePhone(phone)) {
+                showNotification('Неверный формат номера. Используйте +7XXXXXXXXXX', 'error');
+                return;
+            }
+            
+            currentClient = { name, phone };
+            localStorage.setItem('currentClient', JSON.stringify(currentClient));
+            
+            document.getElementById('clientLoginCard').style.display = 'none';
+            document.getElementById('clientOrderCard').style.display = 'block';
+            document.getElementById('clientOrdersCard').style.display = 'block';
+            document.getElementById('clientGreeting').textContent = `👋 Здравствуйте, ${name}!`;
+            
+            updateClientOrders();
+            showNotification('Добро пожаловать!', 'success');
+        }
+        
+        // Выход покупателя
+        function clientLogout() {
+            currentClient = null;
+            localStorage.removeItem('currentClient');
+            document.getElementById('clientLoginCard').style.display = 'block';
+            document.getElementById('clientOrderCard').style.display = 'none';
+            document.getElementById('clientOrdersCard').style.display = 'none';
+            showNotification('Вы вышли из аккаунта покупателя');
+        }
+        
+        // Выход (для доставщика)
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            document.getElementById('courierAuthForms').style.display = 'block';
+            document.getElementById('courierCabinet').style.display = 'none';
+            showNotification('Вы вышли из аккаунта доставщика');
+        }
+        
+        // Создание заказа
+        function createOrder() {
+            if (!currentClient) {
+                showNotification('Сначала войдите в аккаунт', 'error');
+                return;
+            }
+            
+            const order = {
+                id: Date.now(),
+                clientName: currentClient.name,
+                clientPhone: currentClient.phone,
+                shop: document.getElementById('shop').value,
+                items: document.getElementById('items').value,
+                wishes: document.getElementById('wishes').value,
+                priority: document.getElementById('priority').checked,
+                status: 'pending',
+                courierId: null,
+                courierRating: null,
+                clientRating: null,
+                createdAt: new Date().toISOString()
+            };
+            
+            if (order.shop && order.items) {
+                orders.push(order);
+                saveData();
+                showNotification('Заказ оформлен!', 'success');
+                document.getElementById('orderForm').reset();
+                updateClientOrders();
+            } else {
+                showNotification('Заполните обязательные поля!', 'error');
+            }
+        }
+        
+        // Обновление заказов покупателя
+        function updateClientOrders() {
+            if (!currentClient) return;
+            
+            const clientOrders = orders.filter(o => o.clientPhone === currentClient.phone);
+            const list = document.getElementById('clientOrdersList');
+            
+            list.innerHTML = clientOrders.map(order => {
+                let courierInfo = '';
+                let ratingStars = '';
+                
+                if (order.courierId) {
+                    const courier = couriers.find(c => c.phone === order.courierId);
+                    if (courier) {
+                        courierInfo = `
+                            <div style="margin-top: 10px; padding: 10px; background: #252d38; border-radius: 8px;">
+                                <p><strong>Курьер:</strong> ${courier.name}</p>
+                                <p><strong>Рейтинг курьера:</strong> ${courier.rating.toFixed(1)}/5</p>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Звезды для оценки (только если заказ доставлен и еще не оценен)
+                if (order.status === 'delivered' && !order.clientRating) {
+                    ratingStars = `
+                        <div class="rating-stars">
+                            ${[1,2,3,4,5].map(star => 
+                                `<span class="star" onclick="rateOrder(${order.id}, ${star})">★</span>`
+                            ).join('')}
+                        </div>
+                    `;
+                } else if (order.clientRating) {
+                    ratingStars = `<p>Ваша оценка: ${order.clientRating}/5</p>`;
+                }
+                
+                return `
+                    <div class="order-card ${order.priority ? 'priority' : ''} ${order.status === 'delivering' ? 'delivering' : ''} ${order.status === 'delivered' ? 'delivered' : ''}">
+                        <div class="order-header">
+                            <span>Заказ #${order.id}</span>
+                            ${order.priority ? '<span class="order-priority-badge">Приоритет +50₽</span>' : ''}
+                            <span class="order-status status-${order.status}">${
+                                order.status === 'pending' ? 'Ожидает' : 
+                                order.status === 'delivering' ? 'В процессе доставки' : 
+                                'Доставлен'
+                            }</span>
+                        </div>
+                        <p><strong>Магазин:</strong> ${order.shop}</p>
+                        <p><strong>Что купить:</strong> ${order.items}</p>
+                        <p><strong>Пожелания:</strong> ${order.wishes || 'Нет'}</p>
+                        ${courierInfo}
+                        ${ratingStars}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Оценка заказа покупателем
+        function rateOrder(orderId, rating) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.clientRating = rating;
+                
+                // Обновляем рейтинг курьера
+                if (order.courierId) {
+                    const courier = couriers.find(c => c.phone === order.courierId);
+                    if (courier) {
+                        const courierOrders = orders.filter(o => o.courierId === courier.phone && o.clientRating);
+                        const avgRating = courierOrders.length > 0 
+                            ? courierOrders.reduce((sum, o) => sum + o.clientRating, 0) / courierOrders.length 
+                            : 5.0;
+                        courier.rating = avgRating;
+                    }
+                }
+                
+                saveData();
+                updateClientOrders();
+                updateCouriersRating();
+                showNotification('Спасибо за оценку!', 'success');
+            }
+        }
+        
+        // Регистрация курьера
+        function registerCourier() {
+            const name = document.getElementById('regName').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPassword').value;
+            const secretCode = document.getElementById('secretCode').value;
+            
+            if (!name || !phone || !password) {
+                showNotification('Заполните все поля!', 'error');
+                return;
+            }
+            
+            if (!validatePhone(phone)) {
+                showNotification('Неверный формат номера. Используйте +7XXXXXXXXXX', 'error');
+                return;
+            }
+            
+            if (couriers.find(c => c.phone === phone)) {
+                showNotification('Курьер с таким номером уже существует!', 'error');
+                return;
+            }
+            
+            let title = 'Курьер';
+            if (secretCode === 'АдминДоставки26') title = 'Админ';
+            if (secretCode === 'СуперАдминностьДоставки27') title = 'Суперадмин';
+            
+            const newCourier = {
+                id: phone,
+                name: name,
+                phone: phone,
+                password: password,
+                title: title,
+                rating: 5.0,
+                deliveriesCount: 0
+            };
+            
+            couriers.push(newCourier);
+            saveData();
+            showNotification(`Регистрация успешна! Титул: ${title}`, 'success');
+            document.getElementById('registerForm').reset();
+        }
+        
+        // Вход курьера
+        function loginCourier() {
+            const phone = document.getElementById('loginPhone').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!validatePhone(phone)) {
+                showNotification('Неверный формат номера. Используйте +7XXXXXXXXXX', 'error');
+                return;
+            }
+            
+            const courier = couriers.find(c => c.phone === phone && c.password === password);
+            
+            if (courier) {
+                currentUser = courier;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                document.getElementById('courierAuthForms').style.display = 'none';
+                document.getElementById('courierCabinet').style.display = 'block';
+                
+                document.getElementById('cabinetName').textContent = courier.name;
+                document.getElementById('cabinetTitle').textContent = courier.title;
+                document.getElementById('cabinetRating').textContent = courier.rating.toFixed(1);
+                document.getElementById('cabinetDeliveries').textContent = courier.deliveriesCount || 0;
+                document.getElementById('courierAvatar').textContent = courier.name.charAt(0);
+                
+                // Показываем панели
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('superAdminPanel').style.display = 'none';
+                document.getElementById('adminFeedbackPanel').style.display = 'none';
+                
+                if (courier.title === 'Админ' || courier.title === 'Суперадмин') {
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('adminFeedbackPanel').style.display = 'block';
+                    updateAdminSelects();
+                    updateFeedbacksList();
+                }
+                if (courier.title === 'Суперадмин') {
+                    document.getElementById('superAdminPanel').style.display = 'block';
+                    updateSuperAdminSelects();
+                }
+                
+                updateOrdersDisplay();
+                showNotification('Добро пожаловать, ' + courier.name, 'success');
+            } else {
+                showNotification('Неверный номер или пароль!', 'error');
+            }
+        }
+        
+        // Удаление аккаунта
+        function deleteAccount() {
+            if (!currentUser) return;
+            
+            if (confirm('Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить.')) {
+                couriers = couriers.filter(c => c.phone !== currentUser.phone);
+                orders = orders.filter(o => o.courierId !== currentUser.phone);
+                saveData();
+                logout();
+                showNotification('Аккаунт удален', 'success');
+            }
+        }
+        
+        // Очистка базы данных (только суперадмин)
+        function clearDatabase() {
+            if (!currentUser || currentUser.title !== 'Суперадмин') return;
+            
+            if (confirm('⚠️ ВНИМАНИЕ! Это удалит ВСЕХ курьеров, ВСЕ заказы и ВСЕ замечания. Продолжить?')) {
+                orders = [];
+                feedbacks = [];
+                couriers = [{
+                    id: 'superadmin',
+                    name: 'Супер Админ',
+                    phone: '+79999999999',
+                    password: 'admin123',
+                    title: 'Суперадмин',
+                    rating: 5.0,
+                    deliveriesCount: 0
+                }];
+                saveData();
+                showNotification('База данных полностью очищена', 'success');
+                
+                // Если текущий пользователь был суперадмином, обновляем его данные
+                if (currentUser) {
+                    currentUser = couriers[0];
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    checkCurrentUser();
+                }
+                
+                updateOrdersDisplay();
+                updateCouriersList();
+            }
+        }
+        
+        // Обновление списков для админа
+        function updateAdminSelects() {
+            const orderSelect = document.getElementById('adminOrderSelect');
+            if (orderSelect) {
+                orderSelect.innerHTML = orders.map(o => 
+                    `<option value="${o.id}">Заказ #${o.id} - ${o.clientName}</option>`
+                ).join('');
+            }
+            
+            const courierSelect = document.getElementById('adminCourierSelect');
+            if (courierSelect) {
+                courierSelect.innerHTML = couriers.map(c => 
+                    `<option value="${c.phone}">${c.name} - ${c.title} (⭐${c.rating.toFixed(1)})</option>`
+                ).join('');
+            }
+        }
+        
+        // Обновление списков для суперадмина
+        function updateSuperAdminSelects() {
+            const promoteSelect = document.getElementById('promoteToAdminSelect');
+            if (promoteSelect) {
+                promoteSelect.innerHTML = couriers
+                    .filter(c => c.title === 'Курьер')
+                    .map(c => `<option value="${c.phone}">${c.name} - Курьер (⭐${c.rating.toFixed(1)})</option>`)
+                    .join('');
+            }
+            
+            const demoteSelect = document.getElementById('demoteToCourierSelect');
+            if (demoteSelect) {
+                demoteSelect.innerHTML = couriers
+                    .filter(c => c.title === 'Админ')
+                    .map(c => `<option value="${c.phone}">${c.name} - Админ (⭐${c.rating.toFixed(1)})</option>`)
+                    .join('');
+            }
+        }
+        
+        // Админ удаляет заказ
+        function adminDeleteOrder() {
+            const orderId = document.getElementById('adminOrderSelect').value;
+            orders = orders.filter(o => o.id != orderId);
+            saveData();
+            showNotification('Заказ удален', 'success');
+            updateAdminSelects();
+            updateOrdersDisplay();
+        }
+        
+        // Админ удаляет курьера
+        function adminDeleteCourier() {
+            const courierPhone = document.getElementById('adminCourierSelect').value;
+            couriers = couriers.filter(c => c.phone !== courierPhone);
+            orders = orders.filter(o => o.courierId !== courierPhone);
+            saveData();
+            showNotification('Курьер удален', 'success');
+            updateAdminSelects();
+            updateSuperAdminSelects();
+        }
+        
+        // Суперадмин повышает до админа
+        function promoteToAdmin() {
+            const phone = document.getElementById('promoteToAdminSelect').value;
+            const courier = couriers.find(c => c.phone === phone);
+            if (courier) {
+                courier.title = 'Админ';
+                saveData();
+                showNotification('Курьер повышен до Админа', 'success');
+                updateSuperAdminSelects();
+            }
+        }
+        
+        // Суперадмин понижает до курьера
+        function demoteToCourier() {
+            const phone = document.getElementById('demoteToCourierSelect').value;
+            const courier = couriers.find(c => c.phone === phone);
+            if (courier) {
+                courier.title = 'Курьер';
+                saveData();
+                showNotification('Админ понижен до Курьера', 'success');
+                updateSuperAdminSelects();
+            }
+        }
+        
+        // Обновление отображения заказов для курьера
+        function updateOrdersDisplay() {
+            if (!currentUser) return;
+            
+            // Доступные заказы
+            const availableOrders = orders.filter(o => o.status === 'pending');
+            document.getElementById('availableOrders').innerHTML = availableOrders.map(order => `
+                <div class="order-card ${order.priority ? 'priority' : ''}">
+                    <div class="order-header">
+                        <span>${order.clientName}</span>
+                        ${order.priority ? '<span class="order-priority-badge">Приоритет +50₽</span>' : ''}
+                    </div>
+                    <p><strong>Магазин:</strong> ${order.shop}</p>
+                    <p><strong>Что купить:</strong> ${order.items}</p>
+                    <p><strong>Телефон:</strong> ${order.clientPhone}</p>
+                    <p><strong>Пожелания:</strong> ${order.wishes || 'Нет'}</p>
+                    <button class="btn-small" onclick="acceptOrder(${order.id})">✅ Принять заказ</button>
+                </div>
+            `).join('');
+            
+            // Мои заказы
+            const myOrders = orders.filter(o => o.courierId === currentUser.phone);
+            document.getElementById('myOrders').innerHTML = myOrders.map(order => `
+                <div class="order-card ${order.status === 'delivering' ? 'delivering' : 'delivered'}">
+                    <div class="order-header">
+                        <span>${order.clientName}</span>
+                        <span class="order-status status-${order.status}">${order.status === 'delivering' ? 'В процессе' : 'Доставлен'}</span>
+                    </div>
+                    <p><strong>Магазин:</strong> ${order.shop}</p>
+                    <p><strong>Что купить:</strong> ${order.items}</p>
+                    <p><strong>Пожелания:</strong> ${order.wishes || 'Нет'}</p>
+                    <p><strong>Телефон клиента:</strong> ${order.clientPhone}</p>
+                    ${order.clientRating ? `<p><strong>Оценка клиента:</strong> ${order.clientRating}/5</p>` : ''}
+                    ${order.status === 'delivering' ? 
+                        `<button class="btn-small" onclick="completeOrder(${order.id})">✅ Завершить доставку</button>` : 
+                        ''}
+                </div>
+            `).join('');
+        }
+        
+        // Принять заказ
+        function acceptOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'delivering';
+                order.courierId = currentUser.phone;
+                saveData();
+                showNotification('Заказ принят!', 'success');
+                updateOrdersDisplay();
+            }
+        }
+        
+        // Завершить заказ
+        function completeOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'delivered';
+                currentUser.deliveriesCount = (currentUser.deliveriesCount || 0) + 1;
+                
+                // Обновляем в массиве курьеров
+                const courier = couriers.find(c => c.phone === currentUser.phone);
+                if (courier) {
+                    courier.deliveriesCount = currentUser.deliveriesCount;
+                }
+                
+                saveData();
+                showNotification('Заказ доставлен!', 'success');
+                updateOrdersDisplay();
+            }
+        }
+        
+        // Отправка замечания
+        function sendFeedback() {
+            const feedback = {
+                id: Date.now(),
+                name: document.getElementById('feedbackName').value,
+                phone: document.getElementById('feedbackPhone').value,
+                text: document.getElementById('feedbackText').value,
+                date: new Date().toISOString()
+            };
+            
+            if (!validatePhone(feedback.phone)) {
+                showNotification('Неверный формат номера. Используйте +7XXXXXXXXXX', 'error');
+                return;
+            }
+            
+            if (feedback.name && feedback.phone && feedback.text) {
+                feedbacks.push(feedback);
+                saveData();
+                showNotification('Спасибо за замечание!', 'success');
+                document.getElementById('feedbackForm').reset();
+            } else {
+                showNotification('Заполните все поля!', 'error');
+            }
+        }
+        
+        // Обновление списка замечаний для админов
+        function updateFeedbacksList() {
+            const container = document.getElementById('feedbacksContainer');
+            if (container) {
+                container.innerHTML = feedbacks.map(f => `
+                    <div class="feedback-item">
+                        <p><strong style="color: #ffd93d;">${f.name}</strong> <span style="color: #b4c0d0;">(${f.phone})</span></p>
+                        <p style="color: white; margin: 10px 0;">${f.text}</p>
+                        <small style="color: #6c757d;">${new Date(f.date).toLocaleString()}</small>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Обновление рейтинга курьеров
+        function updateCouriersRating() {
+            const ratingDiv = document.getElementById('couriersRating');
+            if (ratingDiv) {
+                ratingDiv.innerHTML = couriers.map(c => `
+                    <div class="card" style="padding: 15px;">
+                        <h4 style="color: #ffd93d; margin-bottom: 10px;">${c.name}</h4>
+                        <p style="color: #b4c0d0;">Титул: ${c.title}</p>
+                        <p style="color: white;">Рейтинг: ${c.rating.toFixed(1)}/5</p>
+                        <p style="color: #b4c0d0;">Доставок: ${c.deliveriesCount || 0}</p>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Обновление списка всех курьеров
+        function updateCouriersList() {
+            const tbody = document.getElementById('couriersTableBody');
+            if (tbody) {
+                tbody.innerHTML = couriers.map(c => `
+                    <tr>
+                        <td style="color: white;">${c.name}</td>
+                        <td style="color: #b4c0d0;">${c.phone}</td>
+                        <td style="color: #ffd93d;">${c.rating.toFixed(1)}/5</td>
+                        <td style="color: ${c.title === 'Суперадмин' ? '#ff6b6b' : c.title === 'Админ' ? '#4a90e2' : '#b4c0d0'};">${c.title}</td>
+                        <td style="color: white;">${c.deliveriesCount || 0}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        // Инициализация после загрузки страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            setupPhoneInputs();
+            
+            document.querySelectorAll('.auto-expand').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
