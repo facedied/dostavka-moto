@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Доставка мотоциклами</title>
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (правильная версия 9) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        /* Твой старый CSS код - вставь его сюда */
+        /* Весь твой CSS код (оставь как было) */
         * {
             margin: 0;
             padding: 0;
@@ -878,55 +878,45 @@
     </div>
     
     <script>
-        // 🔥 ТВОЙ КОНФИГ FIREBASE (ЗАМЕНИ НА СВОЙ!)
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyC1CK8yMSqBchCqMTFmm-QL4pfBhrWaaeA",
-  authDomain: "dostavka-moto.firebaseapp.com",
-  databaseURL: "https://dostavka-moto-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "dostavka-moto",
-  storageBucket: "dostavka-moto.firebasestorage.app",
-  messagingSenderId: "844971274307",
-  appId: "1:844971274307:web:aa96de63489246acb0e4f6",
-  measurementId: "G-16SGTS51JT"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+        // 🔥 ТВОЙ КОНФИГ FIREBASE (вставь сюда то что скопировал)
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1CK8yMSqBchCqMTFmm-QL4pfBhrWaaeA",
+            authDomain: "dostavka-moto.firebaseapp.com",
+            databaseURL: "https://dostavka-moto-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "dostavka-moto",
+            storageBucket: "dostavka-moto.firebasestorage.app",
+            messagingSenderId: "844971274307",
+            appId: "1:844971274307:web:aa96de63489246acb0e4f6",
+            measurementId: "G-16SGTS51JT"
         };
 
-        // Инициализация Firebase
+        // Инициализация Firebase (используем compat версию)
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Хранилища данных (теперь в Firebase)
+        // Хранилища данных
         let orders = [];
         let couriers = [];
         let feedbacks = [];
-        let currentUser = null;
-        let currentClient = null;
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let currentClient = JSON.parse(localStorage.getItem('currentClient')) || null;
 
         // Загрузка данных из Firebase
         function loadData() {
             // Заказы
             db.ref('orders').on('value', (snapshot) => {
-                orders = snapshot.val() ? Object.values(snapshot.val()) : [];
+                const data = snapshot.val();
+                orders = data ? Object.values(data) : [];
                 updateAllDisplays();
             });
 
             // Курьеры
             db.ref('couriers').on('value', (snapshot) => {
-                couriers = snapshot.val() ? Object.values(snapshot.val()) : [];
+                const data = snapshot.val();
+                couriers = data ? Object.values(data) : [];
+                
+                // Если база пустая, создаем суперадмина
                 if (couriers.length === 0) {
-                    // Создаем суперадмина если база пуста
                     const superAdmin = {
                         id: 'superadmin',
                         name: 'Супер Админ',
@@ -939,36 +929,41 @@ const analytics = getAnalytics(app);
                     couriers.push(superAdmin);
                     db.ref('couriers/superadmin').set(superAdmin);
                 }
+                
                 updateAllDisplays();
             });
 
             // Замечания
             db.ref('feedbacks').on('value', (snapshot) => {
-                feedbacks = snapshot.val() ? Object.values(snapshot.val()) : [];
+                const data = snapshot.val();
+                feedbacks = data ? Object.values(data) : [];
                 updateAllDisplays();
             });
         }
 
-        // Сохранение данных в Firebase
+        // Сохранение данных
         function saveOrders() {
-            db.ref('orders').set(orders.reduce((acc, order) => {
-                acc[order.id] = order;
-                return acc;
-            }, {}));
+            const ordersObj = {};
+            orders.forEach(order => {
+                ordersObj[order.id] = order;
+            });
+            db.ref('orders').set(ordersObj);
         }
 
         function saveCouriers() {
-            db.ref('couriers').set(couriers.reduce((acc, courier) => {
-                acc[courier.phone] = courier;
-                return acc;
-            }, {}));
+            const couriersObj = {};
+            couriers.forEach(courier => {
+                couriersObj[courier.phone] = courier;
+            });
+            db.ref('couriers').set(couriersObj);
         }
 
         function saveFeedbacks() {
-            db.ref('feedbacks').set(feedbacks.reduce((acc, feedback) => {
-                acc[feedback.id] = feedback;
-                return acc;
-            }, {}));
+            const feedbacksObj = {};
+            feedbacks.forEach(feedback => {
+                feedbacksObj[feedback.id] = feedback;
+            });
+            db.ref('feedbacks').set(feedbacksObj);
         }
 
         // Обновление всех дисплеев
@@ -986,13 +981,12 @@ const analytics = getAnalytics(app);
             updateCouriersList();
         }
 
-        // Валидация номера телефона
+        // Валидация номера
         function validatePhone(phone) {
             const phoneRegex = /^\+7[0-9]{10}$/;
             return phoneRegex.test(phone);
         }
         
-        // Форматирование номера
         function formatPhone(input) {
             let numbers = input.replace(/[^\d]/g, '');
             if (numbers.length > 0) {
@@ -1005,7 +999,6 @@ const analytics = getAnalytics(app);
             return '';
         }
         
-        // Обработчик ввода для телефонных полей
         function setupPhoneInputs() {
             document.querySelectorAll('.phone-input').forEach(input => {
                 input.addEventListener('input', function(e) {
@@ -1022,13 +1015,11 @@ const analytics = getAnalytics(app);
             });
         }
         
-        // Авто-расширение текстовых полей
         function autoExpand(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = (textarea.scrollHeight) + 'px';
         }
         
-        // Уведомления
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -1039,50 +1030,6 @@ const analytics = getAnalytics(app);
             setTimeout(() => {
                 notification.remove();
             }, 3000);
-        }
-        
-        // Проверка текущего пользователя
-        function checkCurrentUser() {
-            const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                const courier = couriers.find(c => c.phone === currentUser.phone);
-                if (courier) {
-                    currentUser = courier;
-                    document.getElementById('courierAuthForms').style.display = 'none';
-                    document.getElementById('courierCabinet').style.display = 'block';
-                    
-                    document.getElementById('cabinetName').textContent = courier.name;
-                    document.getElementById('cabinetTitle').textContent = courier.title;
-                    document.getElementById('cabinetRating').textContent = courier.rating.toFixed(1);
-                    document.getElementById('cabinetDeliveries').textContent = courier.deliveriesCount || 0;
-                    document.getElementById('courierAvatar').textContent = courier.name.charAt(0);
-                    
-                    document.getElementById('adminPanel').style.display = 'none';
-                    document.getElementById('superAdminPanel').style.display = 'none';
-                    document.getElementById('adminFeedbackPanel').style.display = 'none';
-                    
-                    if (courier.title === 'Админ' || courier.title === 'Суперадмин') {
-                        document.getElementById('adminPanel').style.display = 'block';
-                        document.getElementById('adminFeedbackPanel').style.display = 'block';
-                    }
-                    if (courier.title === 'Суперадмин') {
-                        document.getElementById('superAdminPanel').style.display = 'block';
-                    }
-                }
-            }
-        }
-        
-        // Проверка текущего покупателя
-        function checkCurrentClient() {
-            const savedClient = localStorage.getItem('currentClient');
-            if (savedClient) {
-                currentClient = JSON.parse(savedClient);
-                document.getElementById('clientLoginCard').style.display = 'none';
-                document.getElementById('clientOrderCard').style.display = 'block';
-                document.getElementById('clientOrdersCard').style.display = 'block';
-                document.getElementById('clientGreeting').textContent = `👋 Здравствуйте, ${currentClient.name}!`;
-            }
         }
         
         // Переключение вкладок
@@ -1124,7 +1071,6 @@ const analytics = getAnalytics(app);
             showNotification('Добро пожаловать!', 'success');
         }
         
-        // Выход покупателя
         function clientLogout() {
             currentClient = null;
             localStorage.removeItem('currentClient');
@@ -1134,7 +1080,6 @@ const analytics = getAnalytics(app);
             showNotification('Вы вышли из аккаунта покупателя');
         }
         
-        // Выход доставщика
         function logout() {
             currentUser = null;
             localStorage.removeItem('currentUser');
@@ -1143,7 +1088,6 @@ const analytics = getAnalytics(app);
             showNotification('Вы вышли из аккаунта доставщика');
         }
         
-        // Создание заказа
         function createOrder() {
             if (!currentClient) {
                 showNotification('Сначала войдите в аккаунт', 'error');
@@ -1174,7 +1118,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Обновление заказов покупателя
         function updateClientOrders() {
             if (!currentClient) return;
             
@@ -1230,7 +1173,6 @@ const analytics = getAnalytics(app);
             }).join('');
         }
         
-        // Оценка заказа
         function rateOrder(orderId, rating) {
             const order = orders.find(o => o.id === orderId);
             if (order) {
@@ -1253,7 +1195,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Регистрация курьера
         function registerCourier() {
             const name = document.getElementById('regName').value;
             const phone = document.getElementById('regPhone').value;
@@ -1295,7 +1236,6 @@ const analytics = getAnalytics(app);
             document.getElementById('registerForm').reset();
         }
         
-        // Вход курьера
         function loginCourier() {
             const phone = document.getElementById('loginPhone').value;
             const password = document.getElementById('loginPassword').value;
@@ -1338,7 +1278,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Удаление аккаунта
         function deleteAccount() {
             if (!currentUser) return;
             
@@ -1352,7 +1291,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Очистка базы данных
         function clearDatabase() {
             if (!currentUser || currentUser.title !== 'Суперадмин') return;
             
@@ -1382,7 +1320,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Обновление списков для админа
         function updateAdminSelects() {
             const orderSelect = document.getElementById('adminOrderSelect');
             if (orderSelect) {
@@ -1399,7 +1336,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Обновление списков для суперадмина
         function updateSuperAdminSelects() {
             const promoteSelect = document.getElementById('promoteToAdminSelect');
             if (promoteSelect) {
@@ -1418,7 +1354,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Админ удаляет заказ
         function adminDeleteOrder() {
             const orderId = document.getElementById('adminOrderSelect').value;
             orders = orders.filter(o => o.id != orderId);
@@ -1426,7 +1361,6 @@ const analytics = getAnalytics(app);
             showNotification('Заказ удален', 'success');
         }
         
-        // Админ удаляет курьера
         function adminDeleteCourier() {
             const courierPhone = document.getElementById('adminCourierSelect').value;
             couriers = couriers.filter(c => c.phone !== courierPhone);
@@ -1436,7 +1370,6 @@ const analytics = getAnalytics(app);
             showNotification('Курьер удален', 'success');
         }
         
-        // Суперадмин повышает
         function promoteToAdmin() {
             const phone = document.getElementById('promoteToAdminSelect').value;
             const courier = couriers.find(c => c.phone === phone);
@@ -1447,7 +1380,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Суперадмин понижает
         function demoteToCourier() {
             const phone = document.getElementById('demoteToCourierSelect').value;
             const courier = couriers.find(c => c.phone === phone);
@@ -1458,7 +1390,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Обновление заказов для курьера
         function updateOrdersDisplay() {
             if (!currentUser) return;
             
@@ -1496,7 +1427,6 @@ const analytics = getAnalytics(app);
             `).join('');
         }
         
-        // Принять заказ
         function acceptOrder(orderId) {
             const order = orders.find(o => o.id === orderId);
             if (order) {
@@ -1507,7 +1437,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Завершить заказ
         function completeOrder(orderId) {
             const order = orders.find(o => o.id === orderId);
             if (order) {
@@ -1525,7 +1454,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Отправка замечания
         function sendFeedback() {
             const feedback = {
                 id: Date.now(),
@@ -1550,7 +1478,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Обновление списка замечаний
         function updateFeedbacksList() {
             const container = document.getElementById('feedbacksContainer');
             if (container) {
@@ -1564,7 +1491,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Обновление рейтинга курьеров
         function updateCouriersRating() {
             const ratingDiv = document.getElementById('couriersRating');
             if (ratingDiv) {
@@ -1579,7 +1505,6 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Обновление списка курьеров
         function updateCouriersList() {
             const tbody = document.getElementById('couriersTableBody');
             if (tbody) {
@@ -1595,7 +1520,7 @@ const analytics = getAnalytics(app);
             }
         }
         
-        // Инициализация
+        // Запуск при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             setupPhoneInputs();
             loadData();
@@ -1608,8 +1533,37 @@ const analytics = getAnalytics(app);
             });
             
             // Проверяем сохраненные сессии
-            checkCurrentUser();
-            checkCurrentClient();
+            if (currentUser) {
+                setTimeout(() => {
+                    const courier = couriers.find(c => c.phone === currentUser.phone);
+                    if (courier) {
+                        currentUser = courier;
+                        document.getElementById('courierAuthForms').style.display = 'none';
+                        document.getElementById('courierCabinet').style.display = 'block';
+                        
+                        document.getElementById('cabinetName').textContent = courier.name;
+                        document.getElementById('cabinetTitle').textContent = courier.title;
+                        document.getElementById('cabinetRating').textContent = courier.rating.toFixed(1);
+                        document.getElementById('cabinetDeliveries').textContent = courier.deliveriesCount || 0;
+                        document.getElementById('courierAvatar').textContent = courier.name.charAt(0);
+                        
+                        if (courier.title === 'Админ' || courier.title === 'Суперадмин') {
+                            document.getElementById('adminPanel').style.display = 'block';
+                            document.getElementById('adminFeedbackPanel').style.display = 'block';
+                        }
+                        if (courier.title === 'Суперадмин') {
+                            document.getElementById('superAdminPanel').style.display = 'block';
+                        }
+                    }
+                }, 1000);
+            }
+            
+            if (currentClient) {
+                document.getElementById('clientLoginCard').style.display = 'none';
+                document.getElementById('clientOrderCard').style.display = 'block';
+                document.getElementById('clientOrdersCard').style.display = 'block';
+                document.getElementById('clientGreeting').textContent = `👋 Здравствуйте, ${currentClient.name}!`;
+            }
         });
     </script>
 </body>
