@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Доставка мотоциклами</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
+        /* Твой старый CSS код - вставь его сюда */
         * {
             margin: 0;
             padding: 0;
@@ -12,7 +16,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        /* Темная тема */
         body {
             background: #0a0c0f;
             min-height: 100vh;
@@ -29,7 +32,6 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
         
-        /* Шапка */
         .header {
             background: linear-gradient(135deg, #0f1217, #1a1e24);
             color: white;
@@ -57,7 +59,6 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         
-        /* Навигация */
         .tabs {
             display: flex;
             background: #0f1217;
@@ -110,7 +111,6 @@
             border-color: #ff6b6b;
         }
         
-        /* Контент */
         .tab-content {
             padding: 30px;
             display: none;
@@ -126,7 +126,6 @@
             display: block;
         }
         
-        /* Сетка */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -139,7 +138,6 @@
             gap: 20px;
         }
         
-        /* Карточки */
         .card {
             background: #252b33;
             border-radius: 20px;
@@ -170,7 +168,6 @@
             margin: 15px 0 10px 0;
         }
         
-        /* Формы */
         .form-group {
             margin-bottom: 20px;
         }
@@ -258,7 +255,6 @@
             color: #ffd93d;
         }
         
-        /* Кнопки */
         .btn {
             background: linear-gradient(135deg, #ff6b6b, #ff4757);
             color: white;
@@ -334,7 +330,6 @@
             color: white;
         }
         
-        /* Кнопка выхода в профиле */
         .profile-header {
             display: flex;
             justify-content: space-between;
@@ -360,7 +355,6 @@
             transform: scale(1.05);
         }
         
-        /* Профиль пользователя */
         .user-profile {
             background: #1e242c;
             border-radius: 15px;
@@ -398,7 +392,6 @@
             color: #b4c0d0;
         }
         
-        /* Заказы */
         .orders-list {
             display: flex;
             flex-direction: column;
@@ -536,7 +529,6 @@
             color: #ffd93d;
         }
         
-        /* Таблицы */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -562,31 +554,6 @@
             background: #252d38;
         }
         
-        /* Секретные коды */
-        .secret-codes {
-            background: #0f1217;
-            border: 2px solid #ff6b6b;
-            color: #ffd93d;
-            padding: 20px;
-            border-radius: 15px;
-            font-family: monospace;
-            margin-top: 20px;
-        }
-        
-        .secret-codes p {
-            margin: 8px 0;
-        }
-        
-        .code-example {
-            background: #1e242c;
-            padding: 5px 10px;
-            border-radius: 8px;
-            color: #ff6b6b;
-            display: inline-block;
-            margin-left: 10px;
-        }
-        
-        /* Уведомления */
         .notification {
             position: fixed;
             top: 20px;
@@ -606,7 +573,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
         
-        /* Панели админов */
         .admin-panel {
             background: #0f1217;
             border: 2px solid #ff6b6b;
@@ -628,7 +594,6 @@
             border-left: 3px solid #ff6b6b;
         }
         
-        /* Кнопка очистки базы */
         .clear-db-btn {
             background: linear-gradient(135deg, #dc3545, #a71d2a);
             margin-top: 20px;
@@ -636,7 +601,6 @@
             padding: 20px;
         }
         
-        /* Адаптация */
         @media (max-width: 768px) {
             .grid-2, .grid-3 {
                 grid-template-columns: 1fr;
@@ -728,15 +692,13 @@
             <!-- Рейтинг курьеров -->
             <div class="card" style="margin-top: 20px;">
                 <h3>⭐ Рейтинг курьеров</h3>
-                <div class="grid-3" id="couriersRating">
-                    <!-- Заполняется скриптом -->
-                </div>
+                <div class="grid-3" id="couriersRating"></div>
             </div>
         </div>
         
         <!-- Вкладка Доставщика -->
         <div id="courier" class="tab-content">
-            <!-- Формы регистрации/входа (скрываются после авторизации) -->
+            <!-- Формы регистрации/входа -->
             <div id="courierAuthForms">
                 <div class="grid-2">
                     <!-- Регистрация -->
@@ -759,19 +721,12 @@
                             </div>
                             
                             <div class="form-group">
-                                <label>Секретный код</label>
-                                <input type="text" id="secretCode" placeholder="Введите секретный код">
+                                <label>Секретный код (необязательно)</label>
+                                <input type="text" id="secretCode" placeholder="Введите секретный код если есть">
                             </div>
                             
                             <button type="button" class="btn" onclick="registerCourier()">📝 Зарегистрироваться</button>
                         </form>
-                        
-                        <div class="secret-codes">
-                            <p><strong>🔐 Секретные коды:</strong></p>
-                            <p>🔵 ДоставкаМото26 - <span class="code-example">Курьер</span></p>
-                            <p>🔴 АдминДоставки26 - <span class="code-example">Админ</span></p>
-                            <p>⚫ СуперАдминностьДоставки27 - <span class="code-example">Суперадмин</span></p>
-                        </div>
                     </div>
                     
                     <!-- Авторизация -->
@@ -794,7 +749,7 @@
                 </div>
             </div>
             
-            <!-- Личный кабинет курьера (появляется после входа) -->
+            <!-- Личный кабинет курьера -->
             <div id="courierCabinet" style="display: none;">
                 <div class="profile-header">
                     <h3>👤 Личный кабинет доставщика</h3>
@@ -923,45 +878,121 @@
     </div>
     
     <script>
-        // Хранилища данных
-        let orders = JSON.parse(localStorage.getItem('orders')) || [];
-        let couriers = JSON.parse(localStorage.getItem('couriers')) || [];
-        let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        let currentClient = JSON.parse(localStorage.getItem('currentClient')) || null;
-        
-        // Инициализация
-        function initData() {
-            if (couriers.length === 0) {
-                couriers.push({
-                    id: 'superadmin',
-                    name: 'Супер Админ',
-                    phone: '+79999999999',
-                    password: 'admin123',
-                    title: 'Суперадмин',
-                    rating: 5.0,
-                    deliveriesCount: 0
-                });
+        // 🔥 ТВОЙ КОНФИГ FIREBASE (ЗАМЕНИ НА СВОЙ!)
+        // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC1CK8yMSqBchCqMTFmm-QL4pfBhrWaaeA",
+  authDomain: "dostavka-moto.firebaseapp.com",
+  databaseURL: "https://dostavka-moto-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "dostavka-moto",
+  storageBucket: "dostavka-moto.firebasestorage.app",
+  messagingSenderId: "844971274307",
+  appId: "1:844971274307:web:aa96de63489246acb0e4f6",
+  measurementId: "G-16SGTS51JT"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+        };
+
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Хранилища данных (теперь в Firebase)
+        let orders = [];
+        let couriers = [];
+        let feedbacks = [];
+        let currentUser = null;
+        let currentClient = null;
+
+        // Загрузка данных из Firebase
+        function loadData() {
+            // Заказы
+            db.ref('orders').on('value', (snapshot) => {
+                orders = snapshot.val() ? Object.values(snapshot.val()) : [];
+                updateAllDisplays();
+            });
+
+            // Курьеры
+            db.ref('couriers').on('value', (snapshot) => {
+                couriers = snapshot.val() ? Object.values(snapshot.val()) : [];
+                if (couriers.length === 0) {
+                    // Создаем суперадмина если база пуста
+                    const superAdmin = {
+                        id: 'superadmin',
+                        name: 'Супер Админ',
+                        phone: '+79999999999',
+                        password: 'admin123',
+                        title: 'Суперадмин',
+                        rating: 5.0,
+                        deliveriesCount: 0
+                    };
+                    couriers.push(superAdmin);
+                    db.ref('couriers/superadmin').set(superAdmin);
+                }
+                updateAllDisplays();
+            });
+
+            // Замечания
+            db.ref('feedbacks').on('value', (snapshot) => {
+                feedbacks = snapshot.val() ? Object.values(snapshot.val()) : [];
+                updateAllDisplays();
+            });
+        }
+
+        // Сохранение данных в Firebase
+        function saveOrders() {
+            db.ref('orders').set(orders.reduce((acc, order) => {
+                acc[order.id] = order;
+                return acc;
+            }, {}));
+        }
+
+        function saveCouriers() {
+            db.ref('couriers').set(couriers.reduce((acc, courier) => {
+                acc[courier.phone] = courier;
+                return acc;
+            }, {}));
+        }
+
+        function saveFeedbacks() {
+            db.ref('feedbacks').set(feedbacks.reduce((acc, feedback) => {
+                acc[feedback.id] = feedback;
+                return acc;
+            }, {}));
+        }
+
+        // Обновление всех дисплеев
+        function updateAllDisplays() {
+            if (currentUser) {
+                updateOrdersDisplay();
+                updateAdminSelects();
+                updateSuperAdminSelects();
+                updateFeedbacksList();
             }
-            saveData();
-            checkCurrentUser();
-            checkCurrentClient();
+            if (currentClient) {
+                updateClientOrders();
+            }
+            updateCouriersRating();
+            updateCouriersList();
         }
-        initData();
-        
-        function saveData() {
-            localStorage.setItem('orders', JSON.stringify(orders));
-            localStorage.setItem('couriers', JSON.stringify(couriers));
-            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-        }
-        
+
         // Валидация номера телефона
         function validatePhone(phone) {
             const phoneRegex = /^\+7[0-9]{10}$/;
             return phoneRegex.test(phone);
         }
         
-        // Форматирование номера (убираем все кроме цифр и добавляем +7)
+        // Форматирование номера
         function formatPhone(input) {
             let numbers = input.replace(/[^\d]/g, '');
             if (numbers.length > 0) {
@@ -1010,44 +1041,23 @@
             }, 3000);
         }
         
-        // Обновление в реальном времени
-        function startRealTimeUpdates() {
-            setInterval(() => {
-                orders = JSON.parse(localStorage.getItem('orders')) || [];
-                couriers = JSON.parse(localStorage.getItem('couriers')) || [];
-                feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
-                
-                if (currentUser) {
-                    updateOrdersDisplay();
-                    updateAdminSelects();
-                    updateSuperAdminSelects();
-                    updateFeedbacksList();
-                }
-                if (currentClient) {
-                    updateClientOrders();
-                }
-                updateCouriersRating();
-                updateCouriersList();
-            }, 1000);
-        }
-        startRealTimeUpdates();
-        
         // Проверка текущего пользователя
         function checkCurrentUser() {
-            if (currentUser) {
-                document.getElementById('courierAuthForms').style.display = 'none';
-                document.getElementById('courierCabinet').style.display = 'block';
-                
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
                 const courier = couriers.find(c => c.phone === currentUser.phone);
                 if (courier) {
                     currentUser = courier;
+                    document.getElementById('courierAuthForms').style.display = 'none';
+                    document.getElementById('courierCabinet').style.display = 'block';
+                    
                     document.getElementById('cabinetName').textContent = courier.name;
                     document.getElementById('cabinetTitle').textContent = courier.title;
                     document.getElementById('cabinetRating').textContent = courier.rating.toFixed(1);
                     document.getElementById('cabinetDeliveries').textContent = courier.deliveriesCount || 0;
                     document.getElementById('courierAvatar').textContent = courier.name.charAt(0);
                     
-                    // Показываем панели в зависимости от титула
                     document.getElementById('adminPanel').style.display = 'none';
                     document.getElementById('superAdminPanel').style.display = 'none';
                     document.getElementById('adminFeedbackPanel').style.display = 'none';
@@ -1055,27 +1065,23 @@
                     if (courier.title === 'Админ' || courier.title === 'Суперадмин') {
                         document.getElementById('adminPanel').style.display = 'block';
                         document.getElementById('adminFeedbackPanel').style.display = 'block';
-                        updateAdminSelects();
-                        updateFeedbacksList();
                     }
                     if (courier.title === 'Суперадмин') {
                         document.getElementById('superAdminPanel').style.display = 'block';
-                        updateSuperAdminSelects();
                     }
-                    
-                    updateOrdersDisplay();
                 }
             }
         }
         
         // Проверка текущего покупателя
         function checkCurrentClient() {
-            if (currentClient) {
+            const savedClient = localStorage.getItem('currentClient');
+            if (savedClient) {
+                currentClient = JSON.parse(savedClient);
                 document.getElementById('clientLoginCard').style.display = 'none';
                 document.getElementById('clientOrderCard').style.display = 'block';
                 document.getElementById('clientOrdersCard').style.display = 'block';
                 document.getElementById('clientGreeting').textContent = `👋 Здравствуйте, ${currentClient.name}!`;
-                updateClientOrders();
             }
         }
         
@@ -1090,10 +1096,6 @@
             
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-            
-            if (tabName === 'couriers-list') {
-                updateCouriersList();
-            }
         }
         
         // Вход покупателя
@@ -1119,7 +1121,6 @@
             document.getElementById('clientOrdersCard').style.display = 'block';
             document.getElementById('clientGreeting').textContent = `👋 Здравствуйте, ${name}!`;
             
-            updateClientOrders();
             showNotification('Добро пожаловать!', 'success');
         }
         
@@ -1133,7 +1134,7 @@
             showNotification('Вы вышли из аккаунта покупателя');
         }
         
-        // Выход (для доставщика)
+        // Выход доставщика
         function logout() {
             currentUser = null;
             localStorage.removeItem('currentUser');
@@ -1159,17 +1160,15 @@
                 priority: document.getElementById('priority').checked,
                 status: 'pending',
                 courierId: null,
-                courierRating: null,
                 clientRating: null,
                 createdAt: new Date().toISOString()
             };
             
             if (order.shop && order.items) {
                 orders.push(order);
-                saveData();
+                saveOrders();
                 showNotification('Заказ оформлен!', 'success');
                 document.getElementById('orderForm').reset();
-                updateClientOrders();
             } else {
                 showNotification('Заполните обязательные поля!', 'error');
             }
@@ -1198,7 +1197,6 @@
                     }
                 }
                 
-                // Звезды для оценки (только если заказ доставлен и еще не оценен)
                 if (order.status === 'delivered' && !order.clientRating) {
                     ratingStars = `
                         <div class="rating-stars">
@@ -1232,13 +1230,12 @@
             }).join('');
         }
         
-        // Оценка заказа покупателем
+        // Оценка заказа
         function rateOrder(orderId, rating) {
             const order = orders.find(o => o.id === orderId);
             if (order) {
                 order.clientRating = rating;
                 
-                // Обновляем рейтинг курьера
                 if (order.courierId) {
                     const courier = couriers.find(c => c.phone === order.courierId);
                     if (courier) {
@@ -1247,12 +1244,11 @@
                             ? courierOrders.reduce((sum, o) => sum + o.clientRating, 0) / courierOrders.length 
                             : 5.0;
                         courier.rating = avgRating;
+                        saveCouriers();
                     }
                 }
                 
-                saveData();
-                updateClientOrders();
-                updateCouriersRating();
+                saveOrders();
                 showNotification('Спасибо за оценку!', 'success');
             }
         }
@@ -1294,7 +1290,7 @@
             };
             
             couriers.push(newCourier);
-            saveData();
+            saveCouriers();
             showNotification(`Регистрация успешна! Титул: ${title}`, 'success');
             document.getElementById('registerForm').reset();
         }
@@ -1324,7 +1320,6 @@
                 document.getElementById('cabinetDeliveries').textContent = courier.deliveriesCount || 0;
                 document.getElementById('courierAvatar').textContent = courier.name.charAt(0);
                 
-                // Показываем панели
                 document.getElementById('adminPanel').style.display = 'none';
                 document.getElementById('superAdminPanel').style.display = 'none';
                 document.getElementById('adminFeedbackPanel').style.display = 'none';
@@ -1332,15 +1327,11 @@
                 if (courier.title === 'Админ' || courier.title === 'Суперадмин') {
                     document.getElementById('adminPanel').style.display = 'block';
                     document.getElementById('adminFeedbackPanel').style.display = 'block';
-                    updateAdminSelects();
-                    updateFeedbacksList();
                 }
                 if (courier.title === 'Суперадмин') {
                     document.getElementById('superAdminPanel').style.display = 'block';
-                    updateSuperAdminSelects();
                 }
                 
-                updateOrdersDisplay();
                 showNotification('Добро пожаловать, ' + courier.name, 'success');
             } else {
                 showNotification('Неверный номер или пароль!', 'error');
@@ -1354,13 +1345,14 @@
             if (confirm('Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить.')) {
                 couriers = couriers.filter(c => c.phone !== currentUser.phone);
                 orders = orders.filter(o => o.courierId !== currentUser.phone);
-                saveData();
+                saveCouriers();
+                saveOrders();
                 logout();
                 showNotification('Аккаунт удален', 'success');
             }
         }
         
-        // Очистка базы данных (только суперадмин)
+        // Очистка базы данных
         function clearDatabase() {
             if (!currentUser || currentUser.title !== 'Суперадмин') return;
             
@@ -1376,18 +1368,17 @@
                     rating: 5.0,
                     deliveriesCount: 0
                 }];
-                saveData();
-                showNotification('База данных полностью очищена', 'success');
                 
-                // Если текущий пользователь был суперадмином, обновляем его данные
+                saveOrders();
+                saveFeedbacks();
+                saveCouriers();
+                
                 if (currentUser) {
                     currentUser = couriers[0];
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    checkCurrentUser();
                 }
                 
-                updateOrdersDisplay();
-                updateCouriersList();
+                showNotification('База данных полностью очищена', 'success');
             }
         }
         
@@ -1431,10 +1422,8 @@
         function adminDeleteOrder() {
             const orderId = document.getElementById('adminOrderSelect').value;
             orders = orders.filter(o => o.id != orderId);
-            saveData();
+            saveOrders();
             showNotification('Заказ удален', 'success');
-            updateAdminSelects();
-            updateOrdersDisplay();
         }
         
         // Админ удаляет курьера
@@ -1442,41 +1431,37 @@
             const courierPhone = document.getElementById('adminCourierSelect').value;
             couriers = couriers.filter(c => c.phone !== courierPhone);
             orders = orders.filter(o => o.courierId !== courierPhone);
-            saveData();
+            saveCouriers();
+            saveOrders();
             showNotification('Курьер удален', 'success');
-            updateAdminSelects();
-            updateSuperAdminSelects();
         }
         
-        // Суперадмин повышает до админа
+        // Суперадмин повышает
         function promoteToAdmin() {
             const phone = document.getElementById('promoteToAdminSelect').value;
             const courier = couriers.find(c => c.phone === phone);
             if (courier) {
                 courier.title = 'Админ';
-                saveData();
+                saveCouriers();
                 showNotification('Курьер повышен до Админа', 'success');
-                updateSuperAdminSelects();
             }
         }
         
-        // Суперадмин понижает до курьера
+        // Суперадмин понижает
         function demoteToCourier() {
             const phone = document.getElementById('demoteToCourierSelect').value;
             const courier = couriers.find(c => c.phone === phone);
             if (courier) {
                 courier.title = 'Курьер';
-                saveData();
+                saveCouriers();
                 showNotification('Админ понижен до Курьера', 'success');
-                updateSuperAdminSelects();
             }
         }
         
-        // Обновление отображения заказов для курьера
+        // Обновление заказов для курьера
         function updateOrdersDisplay() {
             if (!currentUser) return;
             
-            // Доступные заказы
             const availableOrders = orders.filter(o => o.status === 'pending');
             document.getElementById('availableOrders').innerHTML = availableOrders.map(order => `
                 <div class="order-card ${order.priority ? 'priority' : ''}">
@@ -1492,7 +1477,6 @@
                 </div>
             `).join('');
             
-            // Мои заказы
             const myOrders = orders.filter(o => o.courierId === currentUser.phone);
             document.getElementById('myOrders').innerHTML = myOrders.map(order => `
                 <div class="order-card ${order.status === 'delivering' ? 'delivering' : 'delivered'}">
@@ -1518,9 +1502,8 @@
             if (order) {
                 order.status = 'delivering';
                 order.courierId = currentUser.phone;
-                saveData();
+                saveOrders();
                 showNotification('Заказ принят!', 'success');
-                updateOrdersDisplay();
             }
         }
         
@@ -1531,15 +1514,14 @@
                 order.status = 'delivered';
                 currentUser.deliveriesCount = (currentUser.deliveriesCount || 0) + 1;
                 
-                // Обновляем в массиве курьеров
                 const courier = couriers.find(c => c.phone === currentUser.phone);
                 if (courier) {
                     courier.deliveriesCount = currentUser.deliveriesCount;
+                    saveCouriers();
                 }
                 
-                saveData();
+                saveOrders();
                 showNotification('Заказ доставлен!', 'success');
-                updateOrdersDisplay();
             }
         }
         
@@ -1560,7 +1542,7 @@
             
             if (feedback.name && feedback.phone && feedback.text) {
                 feedbacks.push(feedback);
-                saveData();
+                saveFeedbacks();
                 showNotification('Спасибо за замечание!', 'success');
                 document.getElementById('feedbackForm').reset();
             } else {
@@ -1568,7 +1550,7 @@
             }
         }
         
-        // Обновление списка замечаний для админов
+        // Обновление списка замечаний
         function updateFeedbacksList() {
             const container = document.getElementById('feedbacksContainer');
             if (container) {
@@ -1597,7 +1579,7 @@
             }
         }
         
-        // Обновление списка всех курьеров
+        // Обновление списка курьеров
         function updateCouriersList() {
             const tbody = document.getElementById('couriersTableBody');
             if (tbody) {
@@ -1613,9 +1595,10 @@
             }
         }
         
-        // Инициализация после загрузки страницы
+        // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
             setupPhoneInputs();
+            loadData();
             
             document.querySelectorAll('.auto-expand').forEach(textarea => {
                 textarea.addEventListener('input', function() {
@@ -1623,6 +1606,10 @@
                     this.style.height = (this.scrollHeight) + 'px';
                 });
             });
+            
+            // Проверяем сохраненные сессии
+            checkCurrentUser();
+            checkCurrentClient();
         });
     </script>
 </body>
